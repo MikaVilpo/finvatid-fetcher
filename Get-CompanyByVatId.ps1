@@ -84,11 +84,11 @@ function Get-CompanyByVatId {
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'BusinessId' -Value $Company.businessId.value
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Name' -Value $CompanyName.name
 
-    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Visiting Street' -Value $CompanyVisitingAddress.street
+    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Visiting Street' -Value $CompanyVisitingAddress.street + ' ' + $CompanyVisitingAddress.streetNumber 
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Visiting PostCode' -Value $CompanyVisitingAddress.postCode
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Visiting City' -Value $CompanyVisitingAddressCity.name
 
-    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Street' -Value $CompanyPostalAddress.street
+    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Street' -Value $CompanyPostalAddress.street + ' ' + $CompanyPostalAddress.streetNumber
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal PostCode' -Value $CompanyPostalAddress.postCode
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal City' -Value $CompanyPostalAddressCity.name
 
