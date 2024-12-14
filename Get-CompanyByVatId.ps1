@@ -68,7 +68,7 @@ function Get-CompanyByVatId {
     $Company = $Content.companies[0]
 
     # Output company information
-    $CompanyName = $Company.names | Where-Object { $_.type -eq 1 -and $_.endDate -eq $null }
+    $CompanyName = $Company.names | Where-Object { $_.type -eq 1 -and $null -eq $_.endDate }
     # Get company visiting address (type=1). Type 2 is postal address
     $CompanyVisitingAddress = $Company.addresses | Where-Object { $_.type -eq 1 }
     # Get post office information in Finnish
@@ -107,7 +107,7 @@ foreach ($VatId in $VatIds) {
         $Company = Get-CompanyByVatId -VatId $VatId
         $Companies += $Company
     } catch {
-        Write-Error "Error processing VAT ID $VatId: $_"
+        Write-Error "Error processing VAT ID $VatId : $_"
     }
 }
 
