@@ -116,5 +116,5 @@ $Companies
 
 # Output to file
 if ($OutputFile) {
-    $Companies | Export-Csv -Path $OutputFile -NoTypeInformation -Encoding UTF8
+    $Companies | Export-Csv -Path $OutputFile -NoTypeInformation -Encoding UTF8 -Delimiter ';'
 }

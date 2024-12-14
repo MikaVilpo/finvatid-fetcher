@@ -17,3 +17,10 @@
 
 ```powershell
 PS> .\Get-CompanyByVatId.ps1 -InputFile 'vatids.txt'
+```
+
+#### Example 2: Output to file
+
+```powershell
+PS> .\Get-CompanyByVatId.ps1 -InputFile 'vatids.txt' -OutputFile 'companies.csv'
+```
