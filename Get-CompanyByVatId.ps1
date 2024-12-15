@@ -50,11 +50,29 @@ function Get-CompanyByVatId {
         throw 'VAT ID is not in correct format'
     }
 
-    # Get company information from PRH API
-    try {
-        $CompanyData = Invoke-WebRequest -Uri "https://avoindata.prh.fi/opendata-ytj-api/v3/companies?businessId=$VatId" -ErrorAction Stop
-    } catch {
-        throw "Failed to retrieve data from PRH API: $_"
+    # Get company information from PRH API with retry logic for 429 status code
+    $MaxRetries = 5
+    $RetryDelay = 5
+    $RetryCount = 0
+    $Success = $false
+
+    while (-not $Success -and $RetryCount -lt $MaxRetries) {
+        try {
+            $CompanyData = Invoke-WebRequest -Uri "https://avoindata.prh.fi/opendata-ytj-api/v3/companies?businessId=$VatId" -ErrorAction Stop
+            $Success = $true
+        } catch {
+            if ($_.Exception.Response.StatusCode -eq 429) {
+                Write-Host "Received 429 Too Many Requests. Retrying in $RetryDelay seconds..."
+                Start-Sleep -Seconds $RetryDelay
+                $RetryCount++
+            } else {
+                throw "Failed to retrieve data from PRH API: $_"
+            }
+        }
+    }
+
+    if (-not $Success) {
+        throw "Failed to retrieve data from PRH API after $MaxRetries attempts."
     }
 
     # Convert JSON to object
@@ -101,12 +119,28 @@ function Get-CompanyByVatId {
 # Read input file
 $VatIds = Get-Content $InputFile
 
+# Validate input file
+if (-not $VatIds) {
+    Write-Error "Input file is empty or does not exist"
+    exit
+}
+
+# Count VAT IDs
+$VatIdCount = $VatIds.Count
+Write-Host "Processing $VatIdCount VAT IDs..."
+
+# Create progress bar
+$Progress = 0
+$ProgressStep = 100 / $VatIdCount
+
 # Create array for company objects
 $Companies = @()
 
 # Loop through VAT IDs
 foreach ($VatId in $VatIds) {
     try {
+        $Progress += $ProgressStep
+        Write-Progress -Activity "Processing VAT IDs" -Status "Processing VAT ID $VatId" -PercentComplete $Progress
         $Company = Get-CompanyByVatId -VatId $VatId
         $Companies += $Company
     } catch {
