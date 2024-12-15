@@ -58,14 +58,18 @@ function Get-CompanyByVatId {
 
     while (-not $Success -and $RetryCount -lt $MaxRetries) {
         try {
-            $CompanyData = Invoke-WebRequest -Uri "https://avoindata.prh.fi/opendata-ytj-api/v3/companies?businessId=$VatId" -ErrorAction Stop
+            $CompanyData = Invoke-WebRequest `
+                -Uri "https://avoindata.prh.fi/opendata-ytj-api/v3/companies?businessId=$VatId" `
+                -ErrorAction Stop 
             $Success = $true
-        } catch {
+        }
+        catch {
             if ($_.Exception.Response.StatusCode -eq 429) {
                 Write-Host "Received 429 Too Many Requests. Retrying in $RetryDelay seconds..."
                 Start-Sleep -Seconds $RetryDelay
                 $RetryCount++
-            } else {
+            }
+            else {
                 throw "Failed to retrieve data from PRH API: $_"
             }
         }
@@ -109,8 +113,8 @@ function Get-CompanyByVatId {
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Visiting City' -Value $CompanyVisitingAddressCity.city
     
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal CO' -Value $CompanyPostalAddress.co
-    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Postbox' -Value $("PL " + $CompanyPostalAddress.postOfficeBox)
-    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Street' -Value $($CompanyPostalAddress.street + ' ' + $CompanyPostalAddress.buildingNumber+ ' ' + $CompanyPostalAddress.entrance + ' ' + $CompanyPostalAddress.apartmentNumber)
+    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Postbox' -Value $('PL ' + $CompanyPostalAddress.postOfficeBox)
+    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Street' -Value $($CompanyPostalAddress.street + ' ' + $CompanyPostalAddress.buildingNumber + ' ' + $CompanyPostalAddress.entrance + ' ' + $CompanyPostalAddress.apartmentNumber)
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal PostCode' -Value $CompanyPostalAddress.postCode
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal City' -Value $CompanyPostalAddressCity.city
 
@@ -122,9 +126,12 @@ $VatIds = Get-Content $InputFile
 
 # Validate input file
 if (-not $VatIds) {
-    Write-Error "Input file is empty or does not exist"
+    Write-Error 'Input file is empty or does not exist'
     exit
 }
+
+# Remove duplicates
+$VatIds = $VatIds | Select-Object -Unique
 
 # Count VAT IDs
 $VatIdCount = $VatIds.Count
@@ -141,10 +148,11 @@ $Companies = @()
 foreach ($VatId in $VatIds) {
     try {
         $Progress += $ProgressStep
-        Write-Progress -Activity "Processing VAT IDs" -Status "Processing VAT ID $VatId" -PercentComplete $Progress
+        Write-Progress -Activity 'Processing VAT IDs' -Status "Processing VAT ID $VatId" -PercentComplete $Progress
         $Company = Get-CompanyByVatId -VatId $VatId
         $Companies += $Company
-    } catch {
+    }
+    catch {
         Write-Error "Error processing VAT ID $VatId : $_"
     }
 }
