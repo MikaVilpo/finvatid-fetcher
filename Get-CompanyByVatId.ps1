@@ -16,7 +16,7 @@
 
 .EXAMPLE
     PS> $CompanyInformation = .\Get-CompanyByVatId.ps1 -InputFile 'vatids.txt'
-    Retrieves the company information for the VAT IDs listed in 'vatids.txt' and outputs the results to the console and store in $CompanyInformation.
+    Retrieves the company information for the VAT IDs listed in 'vatids.txt' and outputs the results to the console and stores it in $CompanyInformation.
 
 .EXAMPLE
     PS> .\Get-CompanyByVatId.ps1 -InputFile 'vatids.txt' -OutputFile 'companies.csv'
