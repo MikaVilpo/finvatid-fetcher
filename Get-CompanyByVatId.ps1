@@ -133,6 +133,9 @@ if (-not $VatIds) {
 # Remove duplicates
 $VatIds = $VatIds | Select-Object -Unique
 
+# Trim whitespace
+$VatIds = $VatIds | ForEach-Object { $_.Trim() }
+
 # Count VAT IDs
 $VatIdCount = $VatIds.Count
 Write-Host "Processing $VatIdCount VAT IDs..."
