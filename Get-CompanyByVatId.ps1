@@ -151,7 +151,7 @@ $Companies = @()
 foreach ($VatId in $VatIds) {
     try {
         $Progress += $ProgressStep
-        Write-Progress -Activity 'Processing VAT IDs' -Status "Processing VAT ID $VatId" -PercentComplete $Progress
+        Write-Progress -Activity 'Processing VAT IDs' -Status "Processing VAT ID $VatId. $([math]::Round($Progress, 2))% complete." -PercentComplete $Progress
         $Company = Get-CompanyByVatId -VatId $VatId
         $Companies += $Company
     }
