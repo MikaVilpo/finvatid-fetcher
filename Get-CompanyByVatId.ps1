@@ -15,8 +15,8 @@
     The path to the output CSV file where the company information will be saved. This parameter is optional.
 
 .EXAMPLE
-    PS> .\Get-CompanyByVatId.ps1 -InputFile 'vatids.txt'
-    Retrieves the company information for the VAT IDs listed in 'vatids.txt' and outputs the results to the console.
+    PS> $CompanyInformation = .\Get-CompanyByVatId.ps1 -InputFile 'vatids.txt'
+    Retrieves the company information for the VAT IDs listed in 'vatids.txt' and outputs the results to the console and store in $CompanyInformation.
 
 .EXAMPLE
     PS> .\Get-CompanyByVatId.ps1 -InputFile 'vatids.txt' -OutputFile 'companies.csv'
@@ -113,7 +113,7 @@ function Get-CompanyByVatId {
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Visiting City' -Value $CompanyVisitingAddressCity.city
     
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal CO' -Value $CompanyPostalAddress.co
-    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Postbox' -Value $('PL ' + $CompanyPostalAddress.postOfficeBox)
+    $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Postbox' -Value $(if ($null -ne $CompanyPostalAddress.postOfficeBox) { 'PL ' + $CompanyPostalAddress.postOfficeBox } else { $null })
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal Street' -Value $($CompanyPostalAddress.street + ' ' + $CompanyPostalAddress.buildingNumber + ' ' + $CompanyPostalAddress.entrance + ' ' + $CompanyPostalAddress.apartmentNumber)
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal PostCode' -Value $CompanyPostalAddress.postCode
     $CompanyObject | Add-Member -MemberType NoteProperty -Name 'Postal City' -Value $CompanyPostalAddressCity.city
