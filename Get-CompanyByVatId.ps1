@@ -142,7 +142,7 @@ Write-Host "Processing $VatIdCount VAT IDs..."
 
 # Create progress bar
 $Progress = 0
-$ProgressStep = 100 / $VatIdCount
+$ProgressStep = 100 / [double]$VatIdCount
 
 # Create array for company objects
 $Companies = @()
